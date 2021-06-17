@@ -11,7 +11,7 @@ var counter = 0;
 
 const options = {
   dotfiles: 'ignore',
-  // etag: false,
+  etag: false,
   // extensions: ['htm', 'html'],
   index: ["index.html"]
   // maxAge: '1d',
