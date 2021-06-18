@@ -9,12 +9,16 @@ const MTLLoader = require("./loaders/MTLLoader.js");
 const FBXLoader = require("./loaders/FBXLoader.js");
 const GLTFLoader = require("./loaders/GLTFLoader.js");
 const ColladaLoader = require("./loaders/ColladaLoader.js");
+const DRACOLoader = require("./loaders/DRACOLoader.js");
 const objLoader = new OBJLoader();
 const materialLoader = new MTLLoader();
 const gltfLoader = new GLTFLoader();
 const fbxLoader = new FBXLoader();
 const daeLoader = new ColladaLoader();
+const dracoLoader = new DRACOLoader();
 
+
+dracoLoader.setDecoderPath( 'https://www.gstatic.com/draco/versioned/decoders/1.4.1/' );
 function loadObj(options, cb, promise) {
 
 	if (options === undefined) return console.error("Invalid options provided to loadObj()");
@@ -29,11 +33,15 @@ function loadObj(options, cb, promise) {
 			loader = objLoader;
 			break;
 		case "gltf":
-		case "glb":
-			// [jscastro] Support for GLTF/GLB
-			loader = gltfLoader;
+			case "glb":
+	loader = gltfLoader;
+		break;
+		case "drc":
+		 
+			loader = dracoLoader;
 			break;
 		case "fbx":
+
 			loader = fbxLoader;
 			break;
 		case "dae":

@@ -26,11 +26,12 @@
 		if (!config) console.error("Config not set! Make a copy of 'config_template.js', add in your access token, and save the file as 'config.js'.");
 
 		mapboxgl.accessToken = config.accessToken;
-		var origin = [-122.4340, 37.7353, 0];
-
+		var origin = [ 9.1009885,39.2602134];
+		// 39.2502758,9.0609885
+//387406.875000 149044.734375
 		var map = new mapboxgl.Map({
 			container: 'map',
-			style: 'mapbox://styles/mapbox/light-v9',
+			style: 'mapbox://styles/mapbox/streets-v9',
 			center: origin,
 			zoom: 12.5,
 			pitch: 60,
@@ -44,7 +45,7 @@
 			map,
 			map.getCanvas().getContext('webgl'),
 			{
-				defaultLights: true,
+				defaultLights: true
 			}
 		);
 		let stats;
@@ -60,11 +61,16 @@
 			map.getContainer().appendChild(stats.dom);
 			animate();
 
-			map.addLayer({
+		window.layer=	map.addLayer({
 				id: 'custom_layer',
 				type: 'custom',
 				renderingMode: '3d',
 				onAdd: function (map, mbxContext) {
+						var g=new THREE.Group();
+						// g.rotation.set(Math.PI /2,0,0);
+						var modelAsMercatorCoordinate = mapboxgl.MercatorCoordinate.fromLngLat(origin);
+						g.position.set(modelAsMercatorCoordinate.x,modelAsMercatorCoordinate.y,modelAsMercatorCoordinate.z);
+						tb.add(g);
 
 					// import soldier from an external glb file, scaling up its size 20x
 					// IMPORTANT: .glb is not a standard MIME TYPE, you'll have to add it to your web server config,
@@ -72,23 +78,24 @@
 
                     // Attribution: Soldier animated model by T. Choonyung at https://www.mixamo.com
 					// from https://www.mixamo.com/#/?page=1&query=vanguard&type=Character
-					var options = {
-						obj: './models/soldier.glb',
-						type: 'gltf',
-						scale: 1000,
-						units: 'meters',
-						rotation: { x: 90, y: 0, z: 0 }, //default rotation
-						anchor: 'center'
-					}
 
-					tb.loadObj(options, function (model) {
-						let soldier = model.setCoords(origin);
-						tb.add(soldier);
-					})
+
+					tb.loadObj({				scale: 1,	obj: 'models/glb/10_1.glb',	type: 'gltf',	units: 'meters'	}, function (model) {
+					 let soldier = model.setCoords(origin);
+					 model.rotation.z=0.37*Math.PI;
+					 model.scale.x=model.scale.y=model.scale.z=0.1;
+
+						g.add(model);
+					});
+					// tb.loadObj({		scale: 1,	obj: 'models/glb/6_28_23.glb',	type: 'gltf',	units: 'meters'	}, function (model) {
+				  // let soldier = model.setCoords(origin);
+					// 	// g.add(model);
+					// });
 
 				},
 
 				render: function (gl, matrix) {
+
 					tb.update();
 				}
 			});
